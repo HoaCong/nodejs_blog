@@ -1,4 +1,8 @@
 const express = require("express");
+
+const multer = require("multer"); // Thư viện hỗ trợ upload file
+const upload = multer({ dest: "uploads/" }); // Thư mục để lưu ảnh
+
 const morgan = require("morgan");
 const path = require("path");
 const handlebars = require("express-handlebars");
@@ -11,7 +15,7 @@ const db = require("./config/db");
 db.connect();
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
@@ -37,6 +41,15 @@ app.set("views", path.join(__dirname, "resources", "views"));
 
 // Route init
 route(app);
+
+app.post("/upload-image", upload.single("image"), (req, res) => {
+  // Xử lý file ảnh tại đây
+  const file = req.file;
+  console.log(file);
+
+  // Trả về kết quả thành công
+  res.send("Upload successful");
+});
 
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
